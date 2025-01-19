@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        p {
+            color: #333;
+            font-size: 1.2rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nombre del Programa</h1>
+        <p>Una breve descripción sobre el programa que explica su propósito y características principales.</p>
+        <button onclick="mostrarFormularioRegistro()">Registrarse</button>
+        <button onclick="mostrarFormularioLogin()">Iniciar Sesión</button>
+    </div>
+
+    <!-- Formularios ocultos -->
+    <div id="formularioRegistro" class="container" style="display:none;">
+        <h2>Registro de Cuenta</h2>
+        <form>
+            <label for="nombre">Nombre:</label><br>
+            <input type="text" id="nombre" name="nombre"><br>
+            <label for="correo">Correo Electrónico:</label><br>
+            <input type="email" id="correo" name="correo"><br>
+            <button type="button" onclick="enviarCodigo()">Enviar Código</button><br>
+            <label for="codigoVerificacion">Código de Verificación:</label><br>
+            <input type="text" id="codigoVerificacion" name="codigoVerificacion"><br>
+            <label for="password">Contraseña:</label><br>
+            <input type="password" id="password" name="password"><br><br>
+            <button type="submit">Registrarse</button>
+            <button type="button" onclick="ocultarFormularioRegistro()">Cancelar</button>
+        </form>
+    </div>
+
+    <div id="formularioLogin" class="container" style="display:none;">
+        <h2>Iniciar Sesión</h2>
+        <form>
+            <label for="usuario">Usuario:</label><br>
+            <input type="text" id="usuario" name="usuario"><br>
+            <label for="passwordLogin">Contraseña:</label><br>
+            <input type="password" id="passwordLogin" name="passwordLogin"><br><br>
+            <button type="submit">Iniciar Sesión</button>
+            <button type="button" onclick="ocultarFormularioLogin()">Cancelar</button>
+        </form>
+    </div>
+
+    <script>
+        function mostrarFormularioRegistro() {
+            document.getElementById('formularioRegistro').style.display = 'block';
+            document.getElementById('formularioLogin').style.display = 'none';
+        }
+
+        function ocultarFormularioRegistro() {
+            document.getElementById('formularioRegistro').style.display = 'none';
+        }
+
+        function mostrarFormularioLogin() {
+            document.getElementById('formularioLogin').style.display = 'block';
+            document.getElementById('formularioRegistro').style.display = 'none';
+        }
+
+        function ocultarFormularioLogin() {
+            document.getElementById('formularioLogin').style.display = 'none';
+        }
+
+        function enviarCodigo() {
+            const correo = document.getElementById('correo').value;
+            alert('Código de verificación enviado a ' + correo);
+            // Aquí puedes agregar la lógica para enviar el código de verificación al correo electrónico.
+        }
+    </script>
+</body>
+</html>
