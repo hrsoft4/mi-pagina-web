@@ -66,8 +66,8 @@
     };
 
     // Inicializar Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const analytics = firebase.analytics();
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
 
     // Funciones de autenticación
     const auth = firebase.auth();
