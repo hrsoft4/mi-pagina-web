@@ -1,0 +1,79 @@
+/* Paleta de colores */
+:root {
+  --blanco: #FFFFFF;
+  --gris-claro: #F5F5F5;
+  --azul-electrico: #007BFF;
+  --negro-carbon: #2C2C2C;
+}
+
+/* Estilos globales */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--gris-claro);
+  color: var(--negro-carbon);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: var(--azul-electrico);
+  font-size: 2.5em;
+  margin: 0;
+}
+
+section {
+  background-color: var(--blanco);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 10px;
+}
+
+input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--gris-claro);
+  border-radius: 5px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background-color: var(--azul-electrico);
+  color: var(--blanco);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: var(--negro-carbon);
+}
+
+.hidden {
+  display: none;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.form-section button:last-child {
+  margin-top: 10px;
+}
