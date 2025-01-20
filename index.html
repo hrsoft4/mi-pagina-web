@@ -79,8 +79,31 @@
         }
     </style>
     <!-- Incluyendo Firebase desde CDN -->
-    <script src="https://www.gstatic.com/firebasejs/9.8.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.8.0/firebase-database.js"></script>
+    <script type="module">
+      // Importar las funciones necesarias de Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+      import { getDatabase } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+      // Configuración de Firebase (sustituye con tus credenciales)
+      const firebaseConfig = {
+          apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
+          authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
+          databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
+          projectId: "base-de-datos-web-ffd19",
+          storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
+          messagingSenderId: "158026017847",
+          appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
+          measurementId: "G-0BEHQR0E1G"
+      };
+
+      // Inicializar Firebase
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      // Hacer que el database y otras funciones estén disponibles globalmente
+      window.firebaseDatabase = database;
+      window.firebaseApp = app;
+    </script>
 </head>
 <body>
     <!-- Página de Registro/Sesión -->
@@ -193,11 +216,11 @@
         <div class="form-header">
             <div>
                 <label for="estadisticaAsignatura">Asignatura:</label>
-                <select id="estadisticaAsignatura" name="estadisticaAsignatura" required></select>
+                                <select id="estadisticaAsignatura" name="estadisticaAsignatura" required></select>
             </div>
             <div>
                 <label for="estadisticaAnio">Año:</label>
-                               <select id="estadisticaAnio" name="estadisticaAnio" required></select>
+                <select id="estadisticaAnio" name="estadisticaAnio" required></select>
             </div>
         </div>
 
