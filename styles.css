@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-  max-width: 400px;
+  max-width: 800px;
   width: 100%;
   padding: 20px;
   background-color: #FFFFFF;
@@ -25,7 +25,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-form {
+form, .menu {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -35,7 +35,6 @@ input, button {
   padding: 10px;
   border: 1px solid #D1D1D1;
   border-radius: 4px;
-  width: calc(100% - 22px);
   margin: 0 auto;
 }
 
@@ -58,7 +57,17 @@ button:hover {
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Media Queries para Responsividad */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #D1D1D1;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 15px;
@@ -70,6 +79,20 @@ button:hover {
 
   input, button {
     font-size: 1em;
+  }
+
+  .student-entry div,
+  .student-entry input,
+  .student-entry button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .attendance-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
   }
 }
 

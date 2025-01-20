@@ -50,6 +50,7 @@
             .then((snapshot) => {
               if (snapshot.exists()) {
                 console.log("Usuario verificado:", snapshot.val());
+                window.location.href = 'dashboard.html'; // Redirige a la página del tablero
               } else {
                 console.log("No se encontraron datos del usuario.");
               }
