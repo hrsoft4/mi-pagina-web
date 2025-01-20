@@ -1,72 +1,53 @@
+/* Estilos Modernos y Minimalistas */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #F5F5F5; /* Gris claro */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    color: #2C2C2C; /* Negro carbón */
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #F5F5F5;
+  color: #2C2C2C;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-    text-align: center;
-    background-color: #FFFFFF; /* Blanco */
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 800px;
-    margin: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-h2 {
-    color: #007BFF; /* Azul eléctrico */
+h1 {
+  color: #007BFF;
+  text-align: center;
 }
 
-.hidden {
-    display: none;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.btn {
-    background-color: #007BFF; /* Azul eléctrico */
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+input, button {
+  padding: 10px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
 }
 
-.btn:hover {
-    background-color: #0056b3; /* Azul más oscuro para hover */
+input:focus {
+  border-color: #007BFF;
+  outline: none;
 }
 
-.form-header {
-    margin-bottom: 1rem;
+button {
+  background-color: #007BFF;
+  color: #FFFFFF;
+  cursor: pointer;
 }
 
-.asistencia-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
+button:hover {
+  background-color: #0056b3;
 }
 
-.asistencia-table th, .asistencia-table td {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    text-align: center;
-}
-
-.asistencia-table th {
-    background-color: #F5F5F5; /* Gris claro */
-}
-
-input[type="date"] {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 150px;
+.shadow {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
 }
