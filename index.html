@@ -1,161 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro y Asistencia</title>
-    <link rel="stylesheet" href="styles.css">
-    <script type="module">
-      // Importar las funciones necesarias de Firebase
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-      import { getDatabase } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
-
-      // Configuración de Firebase (sustituye con tus credenciales)
-      const firebaseConfig = {
-          apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
-          authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
-          databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
-          projectId: "base-de-datos-web-ffd19",
-          storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
-          messagingSenderId: "158026017847",
-          appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
-          measurementId: "G-0BEHQR0E1G"
-      };
-
-      // Inicializar Firebase
-      const app = initializeApp(firebaseConfig);
-      const database = getDatabase(app);
-
-      // Hacer que el database y otras funciones estén disponibles globalmente
-      window.firebaseDatabase = database;
-      window.firebaseApp = app;
-    </script>
+  <meta charset="UTF-8">
+  <title>Mi Proyecto Firebase</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Página de Registro/Sesión -->
-    <div id="registroSesion" class="container">
-        <h2>Registro / Inicio de Sesión</h2>
-        <button class="btn" onclick="mostrarFormulario('registro')">Registrarse</button>
-        <button class="btn" onclick="mostrarFormulario('login')">Iniciar Sesión</button>
-    </div>
+  <div class="container shadow">
+    <h1>Registro y Inicio de Sesión</h1>
 
     <!-- Formulario de Registro -->
-    <div id="formularioRegistro" class="container hidden">
-        <h2>Registro de Usuario</h2>
-        <form id="formRegistro" autocomplete="off">
-            <label for="usuarioRegistro">Usuario:</label><br>
-            <input type="text" id="usuarioRegistro" name="usuarioRegistro" required><br>
-            <label for="passwordRegistro">Contraseña:</label><br>
-            <input type="password" id="passwordRegistro" name="passwordRegistro" required><br><br>
-            <button class="btn" type="submit">Registrar</button>
-            <button class="btn" type="button" onclick="volverInicio()">Cancelar</button>
-        </form>
-    </div>
+    <form id="registerForm">
+      <input type="email" id="email" placeholder="Correo Electrónico" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Registrar</button>
+    </form>
 
-    <!-- Formulario de Login -->
-    <div id="formularioLogin" class="container hidden">
-        <h2>Inicio de Sesión</h2>
-        <form id="formLogin" autocomplete="off">
-            <label for="usuarioLogin">Usuario:</label><br>
-            <input type="text" id="usuarioLogin" name="usuarioLogin" required><br>
-            <label for="passwordLogin">Contraseña:</label><br>
-            <input type="password" id="passwordLogin" name="passwordLogin" required><br><br>
-            <button class="btn" type="submit">Iniciar Sesión</button>
-            <button class="btn" type="button" onclick="volverInicio()">Cancelar</button>
-        </form>
-    </div>
+    <!-- Formulario de Inicio de Sesión -->
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Correo Electrónico" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+  </div>
 
-    <!-- Menú Principal -->
-    <div id="menuPrincipal" class="container hidden">
-        <h2>Menú Principal</h2>
-        <button class="btn" onclick="mostrarAsistencia()">Nueva Asistencia</button>
-        <button class="btn" onclick="mostrarControlAsistencia()">Gestión de Asignaturas</button>
-        <button class="btn" onclick="mostrarEstadisticas()">Estadística</button>
-    </div>
+  <!-- Agrega los scripts de Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.x.y/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x.y/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x.y/firebase-database.js"></script>
 
-    <!-- Página de Gestión de Asignaturas -->
-    <div id="gestionAsignaturas" class="container hidden">
-        <h2>Gestión de Asignaturas</h2>
-        <form id="formAsignaturas">
-            <label for="asignatura">Añadir Asignatura:</label>
-            <input type="text" id="asignatura" name="asignatura" placeholder="Nombre de la Asignatura" required><br>
+  <!-- Agrega los scripts para el registro y el inicio de sesión -->
+  <script type="module">
+    import { registerUser } from './register.js';
+    import { loginUser } from './login.js';
 
-            <label for="anio">Añadir Año:</label>
-            <input type="number" id="anio" name="anio" placeholder="Año" required><br><br>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      registerUser(email, password);
+    });
 
-            <button class="btn" type="submit">Añadir</button>
-        </form>
-
-        <h3>Asignaturas Guardadas</h3>
-        <ul id="listaAsignaturas"></ul>
-
-        <button class="btn" onclick="volverMenu()">Regresar al Menú</button>
-    </div>
-
-    <!-- Página de Asistencia -->
-    <div id="paginaAsistencia" class="container hidden">
-        <h2>Asistencia</h2>
-
-        <div class="form-header">
-            <div>
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
-            </div>
-            <div>
-                <label for="asignaturaSelect">Asignatura:</label>
-                <select id="asignaturaSelect" name="asignaturaSelect" required></select>
-            </div>
-            <div>
-                <label for="anioSelect">Año:</label>
-                <select id="anioSelect" name="anioSelect" required></select>
-            </div>
-        </div>
-
-        <table class="asistencia-table">
-            <thead>
-                <tr>
-                    <th>Estudiante</th>
-                    <th>Presente (P)</th>
-                    <th>Ausente (A)</th>
-                    <th>Justificado (J)</th>
-                </tr>
-            </thead>
-            <tbody id="tablaEstudiantes">
-                <tr>
-                    <td><input type="text" name="estudiante[]" placeholder="Nombre del Estudiante"></td>
-                    <td><input type="checkbox" name="presente[]"></td>
-                    <td><input type="checkbox" name="ausente[]"></td>
-                    <td><input type="checkbox" name="justificado[]"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <button class="btn" onclick="agregarFila()">Agregar Estudiante</button>
-        <button class="btn" onclick="guardarAsistencia()">Guardar Asistencia</button>
-        <button class="btn" onclick="volverMenu()">Regresar al Menú</button>
-    </div>
-
-    <!-- Página de Estadísticas -->
-    <div id="paginaEstadisticas" class="container hidden">
-        <h2>Estadísticas</h2>
-
-        <div class="form-header">
-            <div>
-                <label for="estadisticaAsignatura">Asignatura:</label>
-                <select id="estadisticaAsignatura" name="estadisticaAsignatura" required></select>
-            </div>
-            <div>
-                <select id="estadisticaAnio" name="estadisticaAnio" required></select>
-            </div>
-        </div>
-
-        <div id="resultadoEstadisticas">
-            <!-- Aquí se mostrarán los resultados -->
-        </div>
-
-        <button class="btn" onclick="volverMenu()">Regresar al Menú</button>
-    </div>
-
-    <script src="scripts.js" defer></script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      loginUser(email, password);
+    });
+  </script>
 </body>
 </html>
