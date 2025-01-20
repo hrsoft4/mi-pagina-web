@@ -1,7 +1,6 @@
-// Importa Firebase (si usas npm)
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database";
+import { initializeApp } from "./firebase-app.js"; // asegúrate de que este archivo está en el mismo directorio o ajusta el camino relativo
+import { getAuth } from "./firebase-auth.js";
+import { getDatabase } from "./firebase-database.js";
 
 // Tu configuración de Firebase
 const firebaseConfig = {
