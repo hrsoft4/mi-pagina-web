@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro - Nombre de tu Página Web</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container shadow">
+    <h1>Registro</h1>
+    <form id="registerForm">
+      <input type="email" id="email" placeholder="Correo Electrónico" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Registrar</button>
+    </form>
+    <button onclick="location.href='index.html'">Regresar a la Página Principal</button>
+  </div>
+
+  <!-- Agrega los scripts de Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
+      authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
+      databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
+      projectId: "base-de-datos-web-ffd19",
+      storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
+      messagingSenderId: "158026017847",
+      appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
+      measurementId: "G-0BEHQR0E1G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase();
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          set(ref(database, 'users/' + user.uid), {
+            email: user.email,
+            uid: user.uid
+          });
+          console.log("Usuario registrado y guardado en la base de datos.");
+        })
+        .catch((error) => {
+          console.error("Error al registrar el usuario:", error);
+        });
+    });
+  </script>
+</body>
+</html>
