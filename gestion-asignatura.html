@@ -46,6 +46,17 @@
       border: 1px solid #D1D1D1;
       text-align: center;
     }
+    .delete-button {
+      background-color: #FF0000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    .delete-button:hover {
+      background-color: #CC0000;
+    }
   </style>
 </head>
 <body>
@@ -81,6 +92,7 @@
             <th>Nombre de la Asignatura</th>
             <th>Carrera</th>
             <th>Año</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="subjectsList"></tbody>
@@ -91,8 +103,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
@@ -106,7 +117,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
     const database = getDatabase();
 
     document.getElementById('subjectForm').addEventListener('submit', function(e) {
@@ -114,22 +124,16 @@
       const subjectName = document.getElementById('subjectName').value;
       const career = document.getElementById('career').value;
       const year = document.getElementById('year').value;
-      const user = auth.currentUser;
-
-      if (user) {
-        push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
-          .then(() => {
-            document.getElementById('subjectName').value = '';
-            document.getElementById('career').value = '';
-            document.getElementById('year').value = '1';
-            console.log("Asignatura agregada correctamente.");
-          })
-          .catch((error) => {
-            console.error("Error al agregar la asignatura:", error);
-          });
-      } else {
-        console.error("Usuario no autenticado.");
-      }
+      push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
+        .then(() => {
+          document.getElementById('subjectName').value = '';
+          document.getElementById('career').value = '';
+          document.getElementById('year').value = '1';
+          console.log("Asignatura agregada correctamente.");
+        })
+        .catch((error) => {
+          console.error("Error al agregar la asignatura:", error);
+        });
     });
 
     const subjectsList = document.getElementById('subjectsList');
@@ -138,8 +142,29 @@
       snapshot.forEach((childSnapshot) => {
         const subject = childSnapshot.val();
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${subject.name}</td><td>${subject.career}</td><td>${subject.year}</td>`;
+        tr.innerHTML = `
+          <td>${subject.name}</td>
+          <td>${subject.career}</td>
+          <td>${subject.year}</td>
+          <td><button class="delete-button" data-id="${childSnapshot.key}">Eliminar</button></td>
+        `;
         subjectsList.appendChild(tr);
+      });
+
+      // Añadir evento para los botones de eliminar
+      document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const subjectId = this.getAttribute('data-id');
+          if (confirm("¿Estás seguro de que deseas eliminar esta asignatura?")) {
+            remove(ref(database, `subjects/${subjectId}`))
+              .then(() => {
+                console.log("Asignatura eliminada correctamente.");
+              })
+              .catch((error) => {
+                console.error("Error al eliminar la asignatura:", error);
+              });
+          }
+        });
       });
     });
   </script>
