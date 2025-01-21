@@ -117,18 +117,25 @@
       const attendanceData = [];
 
       students.forEach(student => {
-        const studentName = student.querySelector('input[type=text]').value;
-        const attendance = student.querySelector('input[type=radio]:checked').value;
+        const studentNameInput = student.querySelector('input[type=text]');
+        const attendanceInput = student.querySelector('input[type=radio]:checked');
 
-        attendanceData.push({
-          date: date,
-          subject: selectedSubject.name,
-          career: selectedSubject.career,
-          year: selectedSubject.year,
-          studentName: studentName,
-          attendance: attendance,
-          timestamp: new Date().toISOString()
-        });
+        if (studentNameInput && attendanceInput) {
+          const studentName = studentNameInput.value;
+          const attendance = attendanceInput.value;
+
+          attendanceData.push({
+            date: date,
+            subject: selectedSubject.name,
+            career: selectedSubject.career,
+            year: selectedSubject.year,
+            studentName: studentName,
+            attendance: attendance,
+            timestamp: new Date().toISOString()
+          });
+        } else {
+          console.error("Elemento no encontrado");
+        }
       });
 
       attendanceData.forEach(data => {
