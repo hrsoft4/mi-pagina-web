@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Asignatura - Nombre de tu Página Web</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .form-group-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      flex: 1;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #D1D1D1;
+      border-radius: 4px;
+    }
+    .form-group button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #D1D1D1;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container shadow">
+    <h1>Gestión de Asignaturas</h1>
+    <form id="subjectForm">
+      <div class="form-group-container">
+        <div class="form-group">
+          <label for="subjectName">Nombre de la Asignatura:</label>
+          <input type="text" id="subjectName" required>
+        </div>
+        <div class="form-group">
+          <label for="career">Carrera:</label>
+          <input type="text" id="career" required>
+        </div>
+        <div class="form-group">
+          <label for="year">Año:</label>
+          <select id="year" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">Agregar</button>
+    </form>
+    <div id="subjectsTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre de la Asignatura</th>
+            <th>Carrera</th>
+            <th>Año</th>
+          </tr>
+        </thead>
+        <tbody id="subjectsList"></tbody>
+      </table>
+    </div>
+    <button onclick="location.href='dashboard.html'">Regresar al Menú Principal</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
+      authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
+      databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
+      projectId: "base-de-datos-web-ffd19",
+      storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
+      messagingSenderId: "158026017847",
+      appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
+      measurementId: "G-0BEHQR0E1G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase();
+
+    document.getElementById('subjectForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const subjectName = document.getElementById('subjectName').value;
+      const career = document.getElementById('career').value;
+      const year = document.getElementById('year').value;
+      push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
+        .then(() => {
+          document.getElementById('subjectName').value = '';
+          document.getElementById('career').value = '';
+          document.getElementById('year').value = '1';
+          console.log("Asignatura agregada correctamente.");
+        })
+        .catch((error) => {
+          console.error("Error al agregar la asignatura:", error);
+        });
+    });
+
+    const subjectsList = document.getElementById('subjectsList');
+    onValue(ref(database, 'subjects/'), (snapshot) => {
+      subjectsList.innerHTML = '';
+      snapshot.forEach((childSnapshot) => {
+        const subject = childSnapshot.val();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${subject.name}</td><td>${subject.career}</td><td>${subject.year}</td>`;
+        subjectsList.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>
