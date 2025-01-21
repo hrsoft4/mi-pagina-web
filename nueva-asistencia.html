@@ -20,7 +20,7 @@
       margin-bottom: 2px;
       font-weight: bold;
     }
-    select, #year {
+    select {
       padding: 8px;
       border: 1px solid #D1D1D1;
       border-radius: 4px;
@@ -54,22 +54,8 @@
           <input type="date" id="attendanceDate" required>
         </div>
         <div class="form-group">
-          <label for="subject">Asignatura:</label>
-          <select id="subject" required></select>
-        </div>
-        <div class="form-group">
-          <label for="career">Carrera:</label>
-          <select id="career" required></select>
-        </div>
-        <div class="form-group">
-          <label for="year">Año:</label>
-          <select id="year" required>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <label for="subjectSelect">Asignatura:</label>
+          <select id="subjectSelect" required></select>
         </div>
       </div>
       <div style="display: table; width: 100%;">
@@ -93,7 +79,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
@@ -109,6 +95,52 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const database = getDatabase();
+
+    // Cargar asignaturas en el combobox
+    const subjectSelect = document.getElementById('subjectSelect');
+    onValue(ref(database, 'subjects/'), (snapshot) => {
+      subjectSelect.innerHTML = '<option value="">Seleccione una asignatura</option>'; // Placeholder
+      snapshot.forEach((childSnapshot) => {
+        const subject = childSnapshot.val();
+        const option = document.createElement('option');
+        option.value = JSON.stringify(subject); // Convertir el objeto a string
+        option.textContent = `${subject.name} - ${subject.career} - Año ${subject.year}`;
+        subjectSelect.appendChild(option);
+      });
+    });
+
+    document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const date = document.getElementById('attendanceDate').value;
+      const selectedSubject = JSON.parse(subjectSelect.value); // Convertir el string de vuelta a objeto
+      const students = document.querySelectorAll('.student-entry');
+      const attendanceData = [];
+
+      students.forEach(student => {
+        const studentName = student.querySelector('input[type=text]').value;
+        const attendance = student.querySelector('input[type=radio]:checked').value;
+
+        attendanceData.push({
+          date: date,
+          subject: selectedSubject.name,
+          career: selectedSubject.career,
+          year: selectedSubject.year,
+          studentName: studentName,
+          attendance: attendance,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      attendanceData.forEach(data => {
+        push(ref(database, 'attendances/'), data)
+          .then(() => {
+            console.log("Asistencia guardada correctamente.");
+          })
+          .catch((error) => {
+            console.error("Error al guardar la asistencia:", error);
+          });
+      });
+    });
 
     window.addStudent = function addStudent() {
       const container = document.getElementById('studentsContainer');
@@ -158,42 +190,6 @@
       studentEntry.appendChild(actionCell);
       container.appendChild(studentEntry);
     };
-
-    document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const date = document.getElementById('attendanceDate').value;
-      const subject = document.getElementById('subject').value;
-      const career = document.getElementById('career').value;
-      const year = document.getElementById('year').value;
-
-      const students = document.querySelectorAll('.student-entry');
-      const attendanceData = [];
-
-      students.forEach(student => {
-        const studentName = student.querySelector('input[type=text]').value;
-        const attendance = student.querySelector('input[type=radio]:checked').value;
-
-        attendanceData.push({
-          date: date,
-          subject: subject,
-          career: career,
-          year: year,
-          studentName: studentName,
-          attendance: attendance,
-          timestamp: new Date().toISOString()
-        });
-      });
-
-      attendanceData.forEach(data => {
-        push(ref(database, 'attendances/'), data)
-          .then(() => {
-            console.log("Asistencia guardada correctamente.");
-          })
-          .catch((error) => {
-            console.error("Error al guardar la asistencia:", error);
-          });
-      });
-    });
 
     document.getElementById('addStudentBtn').addEventListener('click', addStudent);
   </script>
