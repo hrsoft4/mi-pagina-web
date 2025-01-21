@@ -103,6 +103,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
     import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -117,6 +118,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
     const database = getDatabase();
 
     document.getElementById('subjectForm').addEventListener('submit', function(e) {
@@ -124,16 +126,22 @@
       const subjectName = document.getElementById('subjectName').value;
       const career = document.getElementById('career').value;
       const year = document.getElementById('year').value;
-      push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
-        .then(() => {
-          document.getElementById('subjectName').value = '';
-          document.getElementById('career').value = '';
-          document.getElementById('year').value = '1';
-          console.log("Asignatura agregada correctamente.");
-        })
-        .catch((error) => {
-          console.error("Error al agregar la asignatura:", error);
-        });
+      const user = auth.currentUser;
+
+      if (user) {
+        push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
+          .then(() => {
+            document.getElementById('subjectName').value = '';
+            document.getElementById('career').value = '';
+            document.getElementById('year').value = '1';
+            console.log("Asignatura agregada correctamente.");
+          })
+          .catch((error) => {
+            console.error("Error al agregar la asignatura:", error);
+          });
+      } else {
+        console.error("Usuario no autenticado.");
+      }
     });
 
     const subjectsList = document.getElementById('subjectsList');
