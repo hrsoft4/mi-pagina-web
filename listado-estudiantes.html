@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de Estudiantes - Nombre de tu Página Web</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #D1D1D1;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container shadow">
+    <h1>Listado de Estudiantes</h1>
+    <div id="studentsTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre del Estudiante</th>
+            <th>Asignatura</th>
+            <th>Carrera</th>
+            <th>Año</th>
+          </tr>
+        </thead>
+        <tbody id="studentsList"></tbody>
+      </table>
+    </div>
+    <button onclick="location.href='dashboard.html'">Regresar al Menú Principal</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
+      authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
+      databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
+      projectId: "base-de-datos-web-ffd19",
+      storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
+      messagingSenderId: "158026017847",
+      appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
+      measurementId: "G-0BEHQR0E1G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase();
+
+    const studentsList = document.getElementById('studentsList');
+    onValue(ref(database, 'attendances/'), (snapshot) => {
+      studentsList.innerHTML = '';
+      snapshot.forEach((childSnapshot) => {
+        const attendance = childSnapshot.val();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${attendance.studentName}</td>
+          <td>${attendance.subject}</td>
+          <td>${attendance.career}</td>
+          <td>${attendance.year}</td>
+        `;
+        studentsList.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>
