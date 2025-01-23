@@ -45,6 +45,96 @@ body {
   text-align: center;
 }
 
+h1 {
+  color: #007BFF;
+  margin-bottom: 20px;
+}
+
+form, .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, button {
+  padding: 10px;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+input:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+button {
+  background-color: #007BFF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.shadow {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #D1D1D1;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  input, button {
+    font-size: 1em;
+  }
+
+  .student-entry div,
+  .student-entry input,
+  .student-entry button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .attendance-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2em;
+  }
+
+  input, button {
+    font-size: 0.9em;
+  }
+
+  button {
+    padding: 8px;
+  }
+}
+
 /* Estilos para la barra superior */
 .top-bar {
   position: fixed;
