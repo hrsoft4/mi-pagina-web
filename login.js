@@ -6,9 +6,8 @@ function loginUser(email, password) {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      // Recupera los datos del usuario desde la base de datos
       const dbRef = ref(database);
-      get(child(dbRef, `users/${user.uid}/data`))  // Recupera datos específicos del usuario
+      get(child(dbRef, `users/${user.uid}/data`))
         .then((snapshot) => {
           if (snapshot.exists()) {
             console.log("Usuario verificado:", snapshot.val());
@@ -24,6 +23,3 @@ function loginUser(email, password) {
       console.error("Error al iniciar sesión:", error);
     });
 }
-
-// Exporta la función para usarla en otros módulos
-export { loginUser };
