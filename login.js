@@ -8,7 +8,7 @@ function loginUser(email, password) {
       const user = userCredential.user;
       // Recupera los datos del usuario desde la base de datos
       const dbRef = ref(database);
-      get(child(dbRef, `users/${user.uid}`))
+      get(child(dbRef, `users/${user.uid}/data`))  // Recupera datos específicos del usuario
         .then((snapshot) => {
           if (snapshot.exists()) {
             console.log("Usuario verificado:", snapshot.val());

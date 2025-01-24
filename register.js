@@ -7,9 +7,10 @@ function registerUser(email, password) {
     .then((userCredential) => {
       const user = userCredential.user;
       // Guarda el usuario en la base de datos
-      set(ref(database, 'users/' + user.uid), {
+      set(ref(database, 'users/' + user.uid + '/data'), {
         email: user.email,
-        uid: user.uid
+        uid: user.uid,
+        // Añade aquí otros datos específicos del usuario
       });
       console.log("Usuario registrado y guardado en la base de datos.");
     })
