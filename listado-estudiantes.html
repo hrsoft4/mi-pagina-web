@@ -38,7 +38,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -56,20 +56,30 @@
     const auth = getAuth();
     const database = getDatabase();
 
-    const studentsList = document.getElementById('studentsList');
-    onValue(ref(database, 'attendances/'), (snapshot) => {
-      studentsList.innerHTML = '';
-      snapshot.forEach((childSnapshot) => {
-        const attendance = childSnapshot.val();
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${attendance.studentName}</td>
-          <td>${attendance.subject}</td>
-          <td>${attendance.career}</td>
-          <td>${attendance.year}</td>
-        `;
-        studentsList.appendChild(tr);
-      });
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userId = user.uid;
+        const studentsList = document.getElementById('studentsList');
+        
+        // Recupera datos de asistencia específicos para el usuario autenticado
+        onValue(ref(database, `users/${userId}/attendances/`), (snapshot) => {
+          studentsList.innerHTML = '';
+          snapshot.forEach((childSnapshot) => {
+            const attendance = childSnapshot.val();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${attendance.studentName}</td>
+              <td>${attendance.subject}</td>
+              <td>${attendance.career}</td>
+              <td>${attendance.year}</td>
+            `;
+            studentsList.appendChild(tr);
+          });
+        });
+      } else {
+        console.error("Usuario no autenticado.");
+        window.location.href = 'inicio-sesion.html';  // Redirigir al inicio de sesión si no está autenticado
+      }
     });
   </script>
 </body>

@@ -78,7 +78,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -96,109 +96,118 @@
     const auth = getAuth();
     const database = getDatabase();
 
-    // Cargar asignaturas en el combobox
-    const subjectSelect = document.getElementById('subjectSelect');
-    onValue(ref(database, 'subjects/'), (snapshot) => {
-      subjectSelect.innerHTML = '<option value="">Seleccione una asignatura</option>'; // Placeholder
-      snapshot.forEach((childSnapshot) => {
-        const subject = childSnapshot.val();
-        const option = document.createElement('option');
-        option.value = JSON.stringify(subject); // Convertir el objeto a string
-        option.textContent = `${subject.name} - ${subject.career} - Año ${subject.year}`;
-        subjectSelect.appendChild(option);
-      });
-    });
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userId = user.uid;
 
-    document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const date = document.getElementById('attendanceDate').value;
-      const selectedSubject = JSON.parse(subjectSelect.value); // Convertir el string de vuelta a objeto
-      const students = document.querySelectorAll('.student-entry');
-      const attendanceData = [];
-
-      students.forEach(student => {
-        const studentNameInput = student.querySelector('input[type=text]');
-        const attendanceInput = student.querySelector('input[type=radio]:checked');
-
-        if (studentNameInput && attendanceInput) {
-          const studentName = studentNameInput.value;
-          const attendance = attendanceInput.value;
-
-          attendanceData.push({
-            date: date,
-            subject: selectedSubject.name,
-            career: selectedSubject.career,
-            year: selectedSubject.year,
-            studentName: studentName,
-            attendance: attendance,
-            timestamp: new Date().toISOString()
+        // Cargar asignaturas en el combobox específicas del usuario autenticado
+        const subjectSelect = document.getElementById('subjectSelect');
+        onValue(ref(database, `users/${userId}/subjects/`), (snapshot) => {
+          subjectSelect.innerHTML = '<option value="">Seleccione una asignatura</option>'; // Placeholder
+          snapshot.forEach((childSnapshot) => {
+            const subject = childSnapshot.val();
+            const option = document.createElement('option');
+            option.value = JSON.stringify(subject); // Convertir el objeto a string
+            option.textContent = `${subject.name} - ${subject.career} - Año ${subject.year}`;
+            subjectSelect.appendChild(option);
           });
-        } else {
-          console.error("Elemento no encontrado");
-        }
-      });
+        });
 
-      attendanceData.forEach(data => {
-        push(ref(database, 'attendances/'), data)
-          .then(() => {
-            console.log("Asistencia guardada correctamente.");
-          })
-          .catch((error) => {
-            console.error("Error al guardar la asistencia:", error);
+        document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const date = document.getElementById('attendanceDate').value;
+          const selectedSubject = JSON.parse(subjectSelect.value); // Convertir el string de vuelta a objeto
+          const students = document.querySelectorAll('.student-entry');
+          const attendanceData = [];
+
+          students.forEach(student => {
+            const studentNameInput = student.querySelector('input[type=text]');
+            const attendanceInput = student.querySelector('input[type=radio]:checked');
+
+            if (studentNameInput && attendanceInput) {
+              const studentName = studentNameInput.value;
+              const attendance = attendanceInput.value;
+
+              attendanceData.push({
+                date: date,
+                subject: selectedSubject.name,
+                career: selectedSubject.career,
+                year: selectedSubject.year,
+                studentName: studentName,
+                attendance: attendance,
+                timestamp: new Date().toISOString()
+              });
+            } else {
+              console.error("Elemento no encontrado");
+            }
           });
-      });
+
+          attendanceData.forEach(data => {
+            push(ref(database, `users/${userId}/attendances/`), data)
+              .then(() => {
+                console.log("Asistencia guardada correctamente.");
+              })
+              .catch((error) => {
+                console.error("Error al guardar la asistencia:", error);
+              });
+          });
+        });
+
+        window.addStudent = function addStudent() {
+          const container = document.getElementById('studentsContainer');
+          const studentEntry = document.createElement('div');
+          studentEntry.className = 'student-entry';
+
+          const studentNameCell = document.createElement('div');
+          const studentNameInput = document.createElement('input');
+          studentNameInput.type = 'text';
+          studentNameInput.placeholder = 'Nombre del Estudiante';
+          studentNameInput.required = true;
+          studentNameCell.appendChild(studentNameInput);
+
+          const presentCell = document.createElement('div');
+          const presentInput = document.createElement('input');
+          presentInput.type = 'radio';
+          presentInput.name = `attendance_${container.children.length}`;
+          presentInput.value = 'P';
+          presentInput.required = true;
+          presentCell.appendChild(presentInput);
+
+          const absentCell = document.createElement('div');
+          const absentInput = document.createElement('input');
+          absentInput.type = 'radio';
+          absentInput.name = `attendance_${container.children.length}`;
+          absentInput.value = 'A';
+          absentCell.appendChild(absentInput);
+
+          const justifiedCell = document.createElement('div');
+          const justifiedInput = document.createElement('input');
+          justifiedInput.type = 'radio';
+          justifiedInput.name = `attendance_${container.children.length}`;
+          justifiedInput.value = 'J';
+          justifiedCell.appendChild(justifiedInput);
+
+          const actionCell = document.createElement('div');
+          const removeButton = document.createElement('button');
+          removeButton.type = 'button';
+          removeButton.innerText = 'Eliminar';
+          removeButton.onclick = () => container.removeChild(studentEntry);
+          actionCell.appendChild(removeButton);
+
+          studentEntry.appendChild(studentNameCell);
+          studentEntry.appendChild(presentCell);
+          studentEntry.appendChild(absentCell);
+          studentEntry.appendChild(justifiedCell);
+          studentEntry.appendChild(actionCell);
+          container.appendChild(studentEntry);
+        };
+
+        document.getElementById('addStudentBtn').addEventListener('click', addStudent);
+      } else {
+        console.error("Usuario no autenticado.");
+        window.location.href = 'inicio-sesion.html';  // Redirigir al inicio de sesión si no está autenticado
+      }
     });
-
-    window.addStudent = function addStudent() {
-      const container = document.getElementById('studentsContainer');
-      const studentEntry = document.createElement('div');
-      studentEntry.className = 'student-entry';
-
-      const studentNameCell = document.createElement('div');
-      const studentNameInput = document.createElement('input');
-      studentNameInput.type = 'text';
-      studentNameInput.placeholder = 'Nombre del Estudiante';
-      studentNameInput.required = true;
-      studentNameCell.appendChild(studentNameInput);
-
-      const presentCell = document.createElement('div');
-      const presentInput = document.createElement('input');
-      presentInput.type = 'radio';
-      presentInput.name = `attendance_${container.children.length}`;
-      presentInput.value = 'P';
-      presentInput.required = true;
-      presentCell.appendChild(presentInput);
-
-      const absentCell = document.createElement('div');
-      const absentInput = document.createElement('input');
-      absentInput.type = 'radio';
-      absentInput.name = `attendance_${container.children.length}`;
-      absentInput.value = 'A';
-      absentCell.appendChild(absentInput);
-
-      const justifiedCell = document.createElement('div');
-      const justifiedInput = document.createElement('input');
-      justifiedInput.type = 'radio';
-      justifiedInput.name = `attendance_${container.children.length}`;
-      justifiedInput.value = 'J';
-      justifiedCell.appendChild(justifiedInput);
-
-      const actionCell = document.createElement('div');
-      const removeButton = document.createElement('button');
-      removeButton.type = 'button';
-      removeButton.innerText = 'Eliminar';
-      removeButton.onclick = () => container.removeChild(studentEntry);
-      actionCell.appendChild(removeButton);
-
-      studentEntry.appendChild(studentNameCell);
-      studentEntry.appendChild(presentCell);
-      studentEntry.appendChild(absentCell);
-      studentEntry.appendChild(justifiedCell);
-      studentEntry.appendChild(actionCell);
-      container.appendChild(studentEntry);
-    };
-
-    document.getElementById('addStudentBtn').addEventListener('click', addStudent);
   </script>
 </body>
 </html>
