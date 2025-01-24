@@ -103,7 +103,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
     import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -121,59 +121,63 @@
     const auth = getAuth();
     const database = getDatabase();
 
-    document.getElementById('subjectForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const subjectName = document.getElementById('subjectName').value;
-      const career = document.getElementById('career').value;
-      const year = document.getElementById('year').value;
-      const user = auth.currentUser;
-
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        push(ref(database, 'subjects/'), { name: subjectName, career: career, year: year })
-          .then(() => {
-            document.getElementById('subjectName').value = '';
-            document.getElementById('career').value = '';
-            document.getElementById('year').value = '1';
-            console.log("Asignatura agregada correctamente.");
-          })
-          .catch((error) => {
-            console.error("Error al agregar la asignatura:", error);
+        const userId = user.uid;
+        
+        document.getElementById('subjectForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const subjectName = document.getElementById('subjectName').value;
+          const career = document.getElementById('career').value;
+          const year = document.getElementById('year').value;
+
+          push(ref(database, `users/${userId}/subjects`), { name: subjectName, career: career, year: year })
+            .then(() => {
+              document.getElementById('subjectName').value = '';
+              document.getElementById('career').value = '';
+              document.getElementById('year').value = '1';
+              console.log("Asignatura agregada correctamente.");
+            })
+            .catch((error) => {
+              console.error("Error al agregar la asignatura:", error);
+            });
+        });
+
+        const subjectsList = document.getElementById('subjectsList');
+        onValue(ref(database, `users/${userId}/subjects`), (snapshot) => {
+          subjectsList.innerHTML = '';
+          snapshot.forEach((childSnapshot) => {
+            const subject = childSnapshot.val();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${subject.name}</td>
+              <td>${subject.career}</td>
+              <td>${subject.year}</td>
+              <td><button class="delete-button" data-id="${childSnapshot.key}">Eliminar</button></td>
+            `;
+            subjectsList.appendChild(tr);
           });
+
+          // Añadir evento para los botones de eliminar
+          document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function() {
+              const subjectId = this.getAttribute('data-id');
+              if (confirm("¿Estás seguro de que deseas eliminar esta asignatura?")) {
+                remove(ref(database, `users/${userId}/subjects/${subjectId}`))
+                  .then(() => {
+                    console.log("Asignatura eliminada correctamente.");
+                  })
+                  .catch((error) => {
+                    console.error("Error al eliminar la asignatura:", error);
+                  });
+              }
+            });
+          });
+        });
       } else {
         console.error("Usuario no autenticado.");
+        window.location.href = 'inicio-sesion.html';  // Redirigir al inicio de sesión si no está autenticado
       }
-    });
-
-    const subjectsList = document.getElementById('subjectsList');
-    onValue(ref(database, 'subjects/'), (snapshot) => {
-      subjectsList.innerHTML = '';
-      snapshot.forEach((childSnapshot) => {
-        const subject = childSnapshot.val();
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${subject.name}</td>
-          <td>${subject.career}</td>
-          <td>${subject.year}</td>
-          <td><button class="delete-button" data-id="${childSnapshot.key}">Eliminar</button></td>
-        `;
-        subjectsList.appendChild(tr);
-      });
-
-      // Añadir evento para los botones de eliminar
-      document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', function() {
-          const subjectId = this.getAttribute('data-id');
-          if (confirm("¿Estás seguro de que deseas eliminar esta asignatura?")) {
-            remove(ref(database, `subjects/${subjectId}`))
-              .then(() => {
-                console.log("Asignatura eliminada correctamente.");
-              })
-              .catch((error) => {
-                console.error("Error al eliminar la asignatura:", error);
-              });
-          }
-        });
-      });
     });
   </script>
 </body>
