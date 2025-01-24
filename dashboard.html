@@ -5,17 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tablero - Nombre de tu Página Web</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="imagenes/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div class="background-image"></div>
   <div class="container shadow">
     <h1>Menú Principal</h1>
+    <p id="userGreeting">Bienvenido/a, <span id="userName">usuario</span></p>
     <button onclick="location.href='nueva-asistencia.html'">Nueva Asistencia</button>
     <button onclick="location.href='gestion-asignatura.html'">Gestión de Asignatura</button>
     <button onclick="location.href='estadistica-asistencia.html'">Estadística de Asistencia</button>
-    <button onclick="location.href='listado-estudiantes.html'">Listado de Estudiantes</button> <!-- Nuevo botón -->
+    <button onclick="location.href='listado-estudiantes.html'">Listado de Estudiantes</button>
     <button onclick="location.href='index.html'">Regresar a la Página Principal</button>
   </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
+      authDomain: "base-de-datos-web-ffd19.firebaseapp.com",
+      databaseURL: "https://base-de-datos-web-ffd19-default-rtdb.firebaseio.com",
+      projectId: "base-de-datos-web-ffd19",
+      storageBucket: "base-de-datos-web-ffd19.firebasestorage.app",
+      messagingSenderId: "158026017847",
+      appId: "1:158026017847:web:f796f0ed6cd0789d0863b2",
+      measurementId: "G-0BEHQR0E1G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userId = user.uid;
+        const userNameElement = document.getElementById('userName');
+        
+        // Obtener el nombre del usuario desde la base de datos
+        get(child(ref(database), `users/${userId}/data`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            userNameElement.textContent = userData.email.split('@')[0];  // Muestra el nombre de usuario antes del '@'
+          }
+        }).catch((error) => {
+          console.error("Error al obtener los datos del usuario:", error);
+        });
+      } else {
+        window.location.href = 'inicio-sesion.html';  // Redirigir al inicio de sesión si no está autenticado
+      }
+    });
+  </script>
 </body>
 </html>

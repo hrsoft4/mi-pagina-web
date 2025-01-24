@@ -20,6 +20,7 @@
 <body>
   <div class="container shadow">
     <h1>Listado de Estudiantes</h1>
+    <p id="userGreeting">Bienvenido/a, <span id="userName">usuario</span></p>
     <div id="studentsTable">
       <table>
         <thead>
@@ -39,7 +40,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+    import { getDatabase, ref, onValue, get, child } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
@@ -59,6 +60,18 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const userId = user.uid;
+        const userNameElement = document.getElementById('userName');
+
+        // Obtener el nombre del usuario desde la base de datos
+        get(child(ref(database), `users/${userId}/data`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            userNameElement.textContent = userData.email.split('@')[0];  // Muestra el nombre de usuario antes del '@'
+          }
+        }).catch((error) => {
+          console.error("Error al obtener los datos del usuario:", error);
+        });
+
         const studentsList = document.getElementById('studentsList');
         
         // Recupera datos de asistencia específicos para el usuario autenticado
