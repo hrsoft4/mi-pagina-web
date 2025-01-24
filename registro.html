@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro - Nombre de tu Página Web</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="imagenes/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div class="background-image"></div>
@@ -17,6 +16,7 @@
       <button type="submit">Registrar</button>
     </form>
     <button onclick="location.href='index.html'">Regresar a la Página Principal</button>
+    <div id="error-message" style="color: red; margin-top: 10px;"></div> <!-- Div para mensajes de error -->
   </div>
 
   <script type="module">
@@ -43,18 +43,26 @@
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('error-message');
 
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          set(ref(database, 'users/' + user.uid), {
+          set(ref(database, `users/${user.uid}/data`), {
             email: user.email,
-            uid: user.uid
+            uid: user.uid,
+            // Otros datos del usuario
           });
           console.log("Usuario registrado y guardado en la base de datos.");
+          errorMessage.textContent = ''; // Limpiar mensaje de error
         })
         .catch((error) => {
-          console.error("Error al registrar el usuario:", error);
+          if (error.code === 'auth/email-already-in-use') {
+            errorMessage.textContent = 'El correo electrónico ya está en uso. Por favor, utiliza otro correo o inicia sesión.';
+          } else {
+            console.error("Error al registrar el usuario:", error);
+            errorMessage.textContent = 'Ocurrió un error al registrar el usuario. Por favor, intenta de nuevo.';
+          }
         });
     });
   </script>
