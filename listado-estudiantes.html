@@ -6,6 +6,24 @@
   <title>Listado de Estudiantes - Nombre de tu Página Web</title>
   <link rel="stylesheet" href="styles.css">
   <style>
+    .user-circle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #007BFF;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .container {
+      position: relative;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -19,8 +37,8 @@
 </head>
 <body>
   <div class="container shadow">
+    <div id="userCircle" class="user-circle">U</div>
     <h1>Listado de Estudiantes</h1>
-    <p id="userGreeting">Bienvenido/a, <span id="userName">usuario</span></p>
     <div id="studentsTable">
       <table>
         <thead>
@@ -60,13 +78,13 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const userId = user.uid;
-        const userNameElement = document.getElementById('userName');
+        const userCircleElement = document.getElementById('userCircle');
 
         // Obtener el nombre del usuario desde la base de datos
         get(child(ref(database), `users/${userId}/data`)).then((snapshot) => {
           if (snapshot.exists()) {
             const userData = snapshot.val();
-            userNameElement.textContent = userData.email.split('@')[0];  // Muestra el nombre de usuario antes del '@'
+            userCircleElement.textContent = userData.email.charAt(0).toUpperCase();  // Muestra la inicial del nombre del usuario
           }
         }).catch((error) => {
           console.error("Error al obtener los datos del usuario:", error);

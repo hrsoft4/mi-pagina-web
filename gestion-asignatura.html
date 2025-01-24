@@ -6,63 +6,30 @@
   <title>Gestión de Asignatura - Nombre de tu Página Web</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .form-group-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .form-group {
-      flex: 1;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    .form-group input,
-    .form-group select,
-    .form-group button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #D1D1D1;
-      border-radius: 4px;
-    }
-    .form-group button {
+    .user-circle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
       background-color: #007BFF;
       color: white;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-transform: uppercase;
     }
-    .form-group button:hover {
-      background-color: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #D1D1D1;
-      text-align: center;
-    }
-    .delete-button {
-      background-color: #FF0000;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 5px 10px;
-      border-radius: 4px;
-    }
-    .delete-button:hover {
-      background-color: #CC0000;
+    .container {
+      position: relative;
     }
   </style>
 </head>
 <body>
   <div class="container shadow">
+    <div id="userCircle" class="user-circle">U</div>
     <h1>Gestión de Asignaturas</h1>
-    <p id="userGreeting">Bienvenido/a, <span id="userName">usuario</span></p>
     <form id="subjectForm">
       <div class="form-group-container">
         <div class="form-group">
@@ -125,13 +92,13 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const userId = user.uid;
-        const userNameElement = document.getElementById('userName');
+        const userCircleElement = document.getElementById('userCircle');
         
         // Obtener el nombre del usuario desde la base de datos
         get(child(ref(database), `users/${userId}/data`)).then((snapshot) => {
           if (snapshot.exists()) {
             const userData = snapshot.val();
-            userNameElement.textContent = userData.email.split('@')[0];  // Muestra el nombre de usuario antes del '@'
+            userCircleElement.textContent = userData.email.charAt(0).toUpperCase();  // Muestra la inicial del nombre del usuario
           }
         }).catch((error) => {
           console.error("Error al obtener los datos del usuario:", error);
