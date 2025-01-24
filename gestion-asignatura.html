@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Asignatura - Nombre de tu Página Web</title>
+  <meta name="description" content="Gestión de asignaturas para mejorar la organización académica.">
   <link rel="stylesheet" href="styles.css">
   <style>
     .user-circle {
@@ -23,6 +24,57 @@
     }
     .container {
       position: relative;
+    }
+    .form-group-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      flex: 1;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #D1D1D1;
+      border-radius: 4px;
+    }
+    .form-group button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #D1D1D1;
+      text-align: center;
+    }
+    .delete-button {
+      background-color: #FF0000;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    .delete-button:hover {
+      background-color: #CC0000;
     }
   </style>
 </head>
@@ -141,7 +193,7 @@
           document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function() {
               const subjectId = this.getAttribute('data-id');
-              if (confirm("¿Estás seguro de que deseas eliminar esta asignatura?")) {
+            if (confirm("¿Estás seguro de que deseas eliminar esta asignatura?")) {
                 remove(ref(database, `users/${userId}/subjects/${subjectId}`))
                   .then(() => {
                     console.log("Asignatura eliminada correctamente.");
