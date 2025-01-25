@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hrsoft4.github.io/mi-pagina-web/sitemap.xml

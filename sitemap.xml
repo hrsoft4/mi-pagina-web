@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página principal -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Página de gestión de asignaturas -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/gestion-asignatura.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Página de listado de estudiantes -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/listado-estudiantes.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Página de nueva asistencia -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/nueva-asistencia.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Página de dashboard -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/dashboard.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Página de inicio de sesión -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/inicio-sesion.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Página de registro -->
+  <url>
+    <loc>https://hrsoft4.github.io/mi-pagina-web/registro.html</loc>
+    <lastmod>2023-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

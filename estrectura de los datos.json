@@ -1,0 +1,31 @@
+{
+  "users": {
+    "PpEeFyHJIVUYS2EU30JLqr3isQx2": {
+      "data": {
+        "email": "juan2@gmail.com",
+        "uid": "PpEeFyHJIVUYS2EU30JLqr3isQx2",
+        "otherData": "datos adicionales del usuario"
+      }
+    },
+    "uMt6HmSwr7aVxNJ8unCcGP9bTku2": {
+      "data": {
+        "email": "juan2@gmail.com",
+        "uid": "uMt6HmSwr7aVxNJ8unCcGP9bTku2",
+        "otherData": "datos adicionales del usuario"
+      }
+    },
+    "ww9N3DoxCHOrYR74eaGLE9v84jG3": {
+      "data": {
+        "email": "felipe1@gmail.com",
+        "uid": "ww9N3DoxCHOrYR74eaGLE9v84jG3",
+        "otherData": "datos adicionales del usuario"
+      }
+    }
+  },
+  "subjects": {
+    "subject1": {
+      "name": "Administracion Estrategica",
+      "year": "1"
+    }
+  }
+}
