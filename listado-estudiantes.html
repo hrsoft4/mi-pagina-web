@@ -38,6 +38,11 @@
       <button id="saveStudentsBtn" class="save-students-btn">Guardar Estudiantes</button>
     </div>
 
+    <!-- Mensaje de confirmación -->
+    <div id="confirmationMessage" style="display: none; color: green; margin-top: 10px;">
+      Estudiantes guardados correctamente.
+    </div>
+
     <!-- Contenedor para los grupos de estudiantes -->
     <div id="groupsContainer"></div>
 
@@ -137,10 +142,12 @@
         const studentInputs = document.getElementById('studentInputs');
         const saveStudentsBtn = document.getElementById('saveStudentsBtn');
         const subjectSelect = document.getElementById('subjectSelect');
+        const confirmationMessage = document.getElementById('confirmationMessage');
 
         addStudentBtn.addEventListener('click', () => {
           addStudentTable.style.display = 'block';
           saveListOptions.style.display = 'block';
+          confirmationMessage.style.display = 'none'; // Ocultar mensaje de confirmación
         });
 
         // Cargar asignaturas en el combobox
@@ -216,6 +223,12 @@
             studentInputs.innerHTML = '';
             addStudentTable.style.display = 'none';
             saveListOptions.style.display = 'none';
+            confirmationMessage.style.display = 'block'; // Mostrar mensaje de confirmación
+
+            // Ocultar el mensaje después de 3 segundos
+            setTimeout(() => {
+              confirmationMessage.style.display = 'none';
+            }, 3000);
           } else {
             alert("Por favor, ingresa al menos un estudiante.");
           }
@@ -342,6 +355,13 @@
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
+    }
+
+    /* Estilos para el mensaje de confirmación */
+    #confirmationMessage {
+      color: green;
+      font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </body>
