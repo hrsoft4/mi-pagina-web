@@ -529,3 +529,13 @@ th {
   font-weight: bold;
   margin-top: 10px;
 }
+/* Estilos para los radio buttons */
+label {
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+}

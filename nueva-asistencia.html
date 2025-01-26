@@ -113,11 +113,15 @@
                   tr.innerHTML = `
                     <td>${student.studentName}</td>
                     <td>
-                      <select class="attendance-select">
-                        <option value="P">Presente</option>
-                        <option value="A">Ausente</option>
-                        <option value="J">Justificado</option>
-                      </select>
+                      <label>
+                        <input type="radio" name="attendance-${student.studentName}" value="P" checked> Presente
+                      </label>
+                      <label>
+                        <input type="radio" name="attendance-${student.studentName}" value="A"> Ausente
+                      </label>
+                      <label>
+                        <input type="radio" name="attendance-${student.studentName}" value="J"> Justificado
+                      </label>
                     </td>
                   `;
                   studentsList.appendChild(tr);
@@ -142,7 +146,7 @@
           const studentRows = document.querySelectorAll('#studentsList tr');
           studentRows.forEach(row => {
             const studentName = row.querySelector('td').textContent;
-            const attendance = row.querySelector('.attendance-select').value;
+            const attendance = row.querySelector('input[name="attendance-' + studentName + '"]:checked').value;
 
             attendanceData.push({
               date: date,
