@@ -13,26 +13,41 @@
   <div class="container shadow">
     <div id="userCircle" class="user-circle">U</div>
     <h1>Listado de Estudiantes</h1>
-    <div id="studentsTable">
+
+    <!-- Botón para agregar estudiantes -->
+    <button id="addStudentBtn" class="add-student-btn">Agregar Estudiante</button>
+
+    <!-- Campo para seleccionar bajo qué nombre guardar el listado -->
+    <div id="saveListOptions" style="display: none;">
+      <label for="subjectSelect">Guardar bajo:</label>
+      <select id="subjectSelect" required></select>
+    </div>
+
+    <!-- Tabla para agregar estudiantes -->
+    <div id="addStudentTable" style="display: none;">
       <table>
         <thead>
           <tr>
-            <th>Nombre del Estudiante</th>
-            <th>Asignatura</th>
-            <th>Carrera</th>
-            <th>Año</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Acciones</th>
           </tr>
         </thead>
-        <tbody id="studentsList"></tbody>
+        <tbody id="studentInputs"></tbody>
       </table>
+      <button id="saveStudentsBtn" class="save-students-btn">Guardar Estudiantes</button>
     </div>
+
+    <!-- Contenedor para los grupos de estudiantes -->
+    <div id="groupsContainer"></div>
+
     <button onclick="location.href='dashboard.html'">Regresar al Menú Principal</button>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-    import { getDatabase, ref, onValue, get, child } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, get, child } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA_x5k1sH6R-UhBjNBCezuon5vC10c1uks",
@@ -64,22 +79,146 @@
           console.error("Error al obtener los datos del usuario:", error);
         });
 
-        const studentsList = document.getElementById('studentsList');
-        
+        const groupsContainer = document.getElementById('groupsContainer');
+
         // Recupera datos de asistencia específicos para el usuario autenticado
         onValue(ref(database, `users/${userId}/attendances/`), (snapshot) => {
-          studentsList.innerHTML = '';
+          groupsContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos datos
+
+          if (snapshot.exists()) {
+            const attendances = [];
+            snapshot.forEach((childSnapshot) => {
+              attendances.push(childSnapshot.val());
+            });
+
+            // Agrupar los estudiantes por asignatura, carrera y año
+            const groupedStudents = attendances.reduce((acc, attendance) => {
+              const groupKey = `${attendance.subject} - ${attendance.career} - Año ${attendance.year}`;
+              if (!acc[groupKey]) {
+                acc[groupKey] = [];
+              }
+              acc[groupKey].push(attendance);
+              return acc;
+            }, {});
+
+            // Mostrar los grupos de estudiantes
+            for (const groupName in groupedStudents) {
+              const groupDiv = document.createElement('div');
+              groupDiv.className = 'student-group';
+              groupDiv.innerHTML = `<h2>${groupName}</h2>`; // Nombre del grupo
+
+              const table = document.createElement('table');
+              table.innerHTML = `
+                <thead>
+                  <tr>
+                    <th>Nombre del Estudiante</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${groupedStudents[groupName].map(student => `
+                    <tr>
+                      <td>${student.studentName}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              `;
+              groupDiv.appendChild(table);
+              groupsContainer.appendChild(groupDiv);
+            }
+          } else {
+            groupsContainer.innerHTML = '<p>No hay estudiantes registrados.</p>';
+          }
+        });
+
+        // Mostrar/ocultar la tabla para agregar estudiantes
+        const addStudentBtn = document.getElementById('addStudentBtn');
+        const addStudentTable = document.getElementById('addStudentTable');
+        const saveListOptions = document.getElementById('saveListOptions');
+        const studentInputs = document.getElementById('studentInputs');
+        const saveStudentsBtn = document.getElementById('saveStudentsBtn');
+        const subjectSelect = document.getElementById('subjectSelect');
+
+        addStudentBtn.addEventListener('click', () => {
+          addStudentTable.style.display = 'block';
+          saveListOptions.style.display = 'block';
+        });
+
+        // Cargar asignaturas en el combobox
+        onValue(ref(database, `users/${userId}/subjects/`), (snapshot) => {
+          subjectSelect.innerHTML = '<option value="">Seleccione una asignatura</option>'; // Placeholder
           snapshot.forEach((childSnapshot) => {
-            const attendance = childSnapshot.val();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${attendance.studentName}</td>
-              <td>${attendance.subject}</td>
-              <td>${attendance.career}</td>
-              <td>${attendance.year}</td>
-            `;
-            studentsList.appendChild(tr);
+            const subject = childSnapshot.val();
+            const option = document.createElement('option');
+            option.value = JSON.stringify(subject); // Convertir el objeto a string
+            option.textContent = `${subject.name} - ${subject.career} - Año ${subject.year}`;
+            subjectSelect.appendChild(option);
           });
+        });
+
+        // Función para agregar una fila de entrada de estudiante
+        function addStudentInputRow() {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><input type="text" class="student-name" placeholder="Nombre" required></td>
+            <td><input type="text" class="student-lastname" placeholder="Apellidos" required></td>
+            <td><button type="button" class="remove-student-btn">Eliminar</button></td>
+          `;
+          studentInputs.appendChild(row);
+
+          // Agregar evento para eliminar la fila
+          row.querySelector('.remove-student-btn').addEventListener('click', () => {
+            studentInputs.removeChild(row);
+          });
+        }
+
+        // Agregar una fila inicial al hacer clic en "Agregar Estudiante"
+        addStudentBtn.addEventListener('click', addStudentInputRow);
+
+        // Guardar estudiantes en Firebase
+        saveStudentsBtn.addEventListener('click', () => {
+          const selectedSubject = JSON.parse(subjectSelect.value); // Obtener la asignatura seleccionada
+          if (!selectedSubject) {
+            alert("Por favor, selecciona una asignatura.");
+            return;
+          }
+
+          const studentRows = document.querySelectorAll('#studentInputs tr');
+          const students = [];
+
+          studentRows.forEach(row => {
+            const studentName = row.querySelector('.student-name').value;
+            const studentLastName = row.querySelector('.student-lastname').value;
+
+            if (studentName && studentLastName) {
+              students.push({
+                studentName: `${studentName} ${studentLastName}`,
+                subject: selectedSubject.name,
+                career: selectedSubject.career,
+                year: selectedSubject.year,
+                groupName: `${selectedSubject.name} - ${selectedSubject.career} - Año ${selectedSubject.year}`,
+                timestamp: new Date().toISOString()
+              });
+            }
+          });
+
+          if (students.length > 0) {
+            students.forEach(student => {
+              push(ref(database, `users/${userId}/attendances/`), student)
+                .then(() => {
+                  console.log("Estudiante guardado correctamente.");
+                })
+                .catch((error) => {
+                  console.error("Error al guardar el estudiante:", error);
+                });
+            });
+
+            // Limpiar la tabla de entrada después de guardar
+            studentInputs.innerHTML = '';
+            addStudentTable.style.display = 'none';
+            saveListOptions.style.display = 'none';
+          } else {
+            alert("Por favor, ingresa al menos un estudiante.");
+          }
         });
       } else {
         console.error("Usuario no autenticado.");
@@ -87,5 +226,123 @@
       }
     });
   </script>
+
+  <style>
+    /* Estilos para los grupos de estudiantes */
+    .student-group {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    .student-group h2 {
+      margin-top: 0;
+      color: #007BFF;
+    }
+
+    .student-group table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .student-group th, .student-group td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .student-group th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    /* Estilos para el botón de agregar estudiante */
+    .add-student-btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .add-student-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Estilos para la tabla de agregar estudiantes */
+    #addStudentTable {
+      margin-bottom: 20px;
+    }
+
+    #addStudentTable table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+
+    #addStudentTable th, #addStudentTable td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    #addStudentTable th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    #addStudentTable input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .remove-student-btn {
+      background-color: #ff4d4d;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .remove-student-btn:hover {
+      background-color: #cc0000;
+    }
+
+    .save-students-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .save-students-btn:hover {
+      background-color: #218838;
+    }
+
+    /* Estilos para el campo de selección de asignatura */
+    #saveListOptions {
+      margin-bottom: 20px;
+    }
+
+    #saveListOptions label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    #saveListOptions select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
 </body>
 </html>
