@@ -43,6 +43,8 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   text-align: center;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+  max-height: 80vh; /* Limita la altura del contenedor al 80% del viewport */
 }
 
 h1 {
@@ -182,10 +184,40 @@ th, td {
   gap: 10px;
 }
 
+/* Estilos para el contenedor de grupos de estudiantes */
+#groupsContent {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  max-height: 1000px; /* Ajusta según tu contenido */
+}
+
+#groupsContent.collapsed {
+  max-height: 0;
+}
+
+#toggleGroupsBtn {
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+#toggleGroupsBtn:hover {
+  background-color: #0056b3;
+}
+
 /* Estilos responsivos */
 @media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
   .container {
-    padding: 15px;
+    padding: 10px;
+    max-width: 100%;
   }
 
   h1 {
@@ -194,6 +226,7 @@ th, td {
 
   input, button {
     font-size: 1em;
+    padding: 8px;
   }
 
   .student-entry div,
@@ -205,23 +238,135 @@ th, td {
   }
 
   .attendance-options {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
+
+  .floating-btn {
+    bottom: 20px;
+    right: 10px;
+  }
+
+  .floating-btn.telegram {
+    bottom: 80px;
+  }
+
+  .floating-btn.email {
+    bottom: 140px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th, td {
+    min-width: 100px;
+  }
+
+  .form-group-container {
+    flex-direction: column;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .add-student-btn, .save-students-btn, .delete-button {
+    width: 100%;
+  }
+
+  #saveListOptions select {
+    width: 100%;
+  }
+
+  #confirmationMessage {
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
   }
 }
 
 @media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+
   h1 {
     font-size: 1.2em;
   }
 
   input, button {
     font-size: 0.9em;
+    padding: 6px;
   }
 
-  button {
-    padding: 8px;
+  .floating-btn {
+    width: 40px;
+    height: 40px;
+    bottom: 10px;
+    right: 5px;
+  }
+
+  .floating-btn.telegram {
+    bottom: 60px;
+  }
+
+  .floating-btn.email {
+    bottom: 110px;
+  }
+
+  .navbar-logo span {
+    font-size: 1em;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    max-width: 90%;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  input, button {
+    font-size: 1.1em;
+    padding: 10px;
+  }
+
+  .navbar-links {
+    gap: 10px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .container {
+    max-width: 1200px;
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+
+  input, button {
+    font-size: 1.2em;
+    padding: 12px;
+  }
+
+  .navbar-links {
+    gap: 30px;
   }
 }
 
@@ -529,6 +674,7 @@ th {
   font-weight: bold;
   margin-top: 10px;
 }
+
 /* Estilos para los radio buttons */
 label {
   display: inline-block;
@@ -538,4 +684,65 @@ label {
 
 input[type="radio"] {
   margin-right: 5px;
+}
+
+/* Estilos para la Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 123, 255, 0.8); /* Fondo semitransparente */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.navbar-logo span {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.navbar-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links li {
+  display: inline-block;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Ajustes para el contenido principal */
+.content {
+  margin-top: 80px; /* Asegura que el contenido no se solape con la navbar */
 }

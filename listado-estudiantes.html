@@ -46,7 +46,12 @@
     </div>
 
     <!-- Contenedor para los grupos de estudiantes -->
-    <div id="groupsContainer"></div>
+    <div id="groupsContainer">
+      <button id="toggleGroupsBtn">Contraer/Expandir Grupos</button>
+      <div id="groupsContent">
+        <!-- Aquí se cargarán los grupos de estudiantes dinámicamente -->
+      </div>
+    </div>
 
     <button onclick="location.href='dashboard.html'">Regresar al Menú Principal</button>
   </div>
@@ -239,6 +244,13 @@
         console.error("Usuario no autenticado.");
         window.location.href = 'inicio-sesion.html';  // Redirigir al inicio de sesión si no está autenticado
       }
+    });
+  </script>
+
+  <script>
+    document.getElementById('toggleGroupsBtn').addEventListener('click', function () {
+      const groupsContent = document.getElementById('groupsContent');
+      groupsContent.classList.toggle('collapsed');
     });
   </script>
 </body>

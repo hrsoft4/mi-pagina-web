@@ -13,25 +13,33 @@
 </head>
 <body>
   <div class="background-image"></div>
-  <div class="top-bar">
-    <div class="logo-section">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
       <img src="logo.png" alt="Logo de Nombre de tu Página Web">
       <span>Nombre de tu Página Web</span>
     </div>
-    <div class="button-group">
-      <button onclick="location.href='registro.html'">Registrar</button>
-      <button onclick="location.href='inicio-sesion.html'">Iniciar Sesión</button>
-    </div>
-  </div>
+    <ul class="navbar-links">
+      <li><a href="registro.html">Registrar</a></li>
+      <li><a href="inicio-sesion.html">Iniciar Sesión</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenido Principal -->
   <div class="content">
     <div class="container">
       <h1>Descripción de la Página</h1>
       <p>Esta es la descripción de tu página web. Aquí puedes añadir más información sobre los servicios que ofreces, la misión y visión de tu empresa, y cualquier otro detalle relevante que desees compartir con tus visitantes.</p>
     </div>
   </div>
+
+  <!-- Barra Inferior -->
   <div class="bottom-bar">
     <span>&copy; 2025 Nombre de tu Página Web. Todos los derechos reservados.</span>
   </div>
+
+  <!-- Botones Flotantes -->
   <button class="floating-btn whatsapp" onclick="window.location.href='https://wa.me/11234567890'">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
   </button>
